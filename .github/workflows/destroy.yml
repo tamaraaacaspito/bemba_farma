@@ -1,0 +1,37 @@
+name: Destruir Infraestructura Terraform
+
+run-name: ${{ github.actor }} - Destruyendo infraestructura en AWS (Destroy)
+
+on:
+  workflow_dispatch: 
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  terraform-destroy:
+    runs-on: ubuntu-latest
+    environment: dev 
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar credenciales AWS mediante OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Configurar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.5"
+
+      - name: Inicializar Terraform con el backend S3
+        run: terraform -chdir=terraform init
+
+      - name: Ejecutar Terraform Destroy
+        run: terraform -chdir=terraform destroy -auto-approve
+        
