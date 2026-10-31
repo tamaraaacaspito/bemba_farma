@@ -29,8 +29,18 @@ jobs:
         with:
           terraform_version: "1.6.5"
 
+      - name: Crear backend.hcl dinámicamente
+        run: |
+          cat <<EOF > terraform/backend.hcl
+          bucket       = "${{ vars.TF_BUCKET_NAME }}"
+          key          = "lab09/dev/terraform.tfstate"
+          region       = "${{ vars.AWS_REGION }}"
+          encrypt      = true
+          use_lockfile = true
+          EOF
+
       - name: Inicializar Terraform con el backend S3
-        run: terraform -chdir=terraform init
+        run: terraform -chdir=terraform init -backend-config=backend.hcl
 
       - name: Ejecutar Terraform Destroy
         run: terraform -chdir=terraform destroy -auto-approve
