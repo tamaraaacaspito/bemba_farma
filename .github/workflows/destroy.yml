@@ -27,7 +27,7 @@ jobs:
       - name: Configurar Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.6.5"
+          terraform_version: "1.10.5"
 
       - name: Crear backend.hcl dinámicamente
         run: |
