@@ -1,21 +1,39 @@
 name: Deploy Staging - Frontend React
 
-run-name: ${{ github.actor }} - Desplegando Frontend a Staging
+run-name: ${{ github.actor }} - Desplegando Frontend a Staging (dev)
 
 on:
   push:
     branches:
-      - develop
+      - development  
+
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   desplegar-frontend-staging:
     runs-on: ubuntu-latest
+    environment: dev  
+
     steps:
       - name: Checkout del repositorio
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Compilar producción
-        run: echo "Generando build optimizado de React."
+      - name: Configurar credenciales AWS mediante OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}  
+          aws-region: ${{ vars.AWS_REGION }}       
+
+      - name: Instalar dependencias y compilar producción
+        run: |
+          npm install
+          npm run build
+          echo "Generando build optimizado de React."
 
       - name: Publicar en S3 y CloudFront
-        run: echo "Subiendo estáticos al bucket S3 de Staging y refrescando CloudFront."
+        run: |
+          # Aquí iría tu comando real de AWS CLI, por ejemplo: aws s3 sync dist/ s3://tu-bucket-staging/
+          echo "Subiendo estáticos al bucket S3 de Staging y refrescando CloudFront."

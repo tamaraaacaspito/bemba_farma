@@ -1,24 +1,45 @@
 name: Deploy Staging - Backend Node.js
 
-run-name: ${{ github.actor }} - Desplegando Backend a Staging
+run-name: ${{ github.actor }} - Desplegando Backend a Staging (dev)
 
 on:
   push:
     branches:
-      - develop
+      - development  
+
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   desplegar-backend-staging:
     runs-on: ubuntu-latest
+    environment: dev  
+
     steps:
       - name: Checkout del repositorio
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Crear o actualizar recursos AWS
-        run: echo "Preparando recursos AWS mediante Terraform/CloudFormation para Staging."
+      - name: Configurar credenciales AWS mediante OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}  
+          aws-region: ${{ vars.AWS_REGION }}       
 
-      - name: Desplegar Backend
-        run: echo "Desplegando Node.js en AWS Lambda y API Gateway (Staging)."
+      - name: Inicializar Terraform con backend S3
+        run: |
+          terraform -chdir=terraform init \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+            -backend-config="key=lab09/dev/terraform.tfstate" \
+            -backend-config="region=${{ vars.AWS_REGION }}"
 
-      - name: Pruebas de integración
-        run: echo "Ejecutando pruebas sobre la URL de Staging."
+      - name: Validar y planificar infraestructura
+        run: |
+          terraform -chdir=terraform validate
+          terraform -chdir=terraform plan
+
+      - name: Aplicar cambios en Terraform (Despliegue)
+        run: |
+          terraform -chdir=terraform apply -auto-approve
+          echo "Despliegue en el entorno dev completado exitosamente."
