@@ -1,0 +1,33 @@
+name: CI - Frontend React
+
+run-name: ${{ github.actor }} - Validando Frontend
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  validar-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v6
+
+      - name: Preparar entorno
+        run: echo "Preparando entorno con Node.js para React."
+
+      - name: Instalar dependencias
+        run: echo "Instalando paquetes de React desde package.json."
+
+      - name: Analizar código
+        run: echo "Ejecutando linter para validar componentes de React."
+
+      - name: Verificar compilación
+        run: echo "Construyendo versión de prueba con npm run build."

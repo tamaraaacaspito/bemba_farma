@@ -1,0 +1,24 @@
+name: Deploy Staging - Backend Node.js
+
+run-name: ${{ github.actor }} - Desplegando Backend a Staging
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  desplegar-backend-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v6
+
+      - name: Crear o actualizar recursos AWS
+        run: echo "Preparando recursos AWS mediante Terraform/CloudFormation para Staging."
+
+      - name: Desplegar Backend
+        run: echo "Desplegando Node.js en AWS Lambda y API Gateway (Staging)."
+
+      - name: Pruebas de integración
+        run: echo "Ejecutando pruebas sobre la URL de Staging."

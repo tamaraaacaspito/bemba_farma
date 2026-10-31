@@ -1,0 +1,28 @@
+name: Deploy Production - Backend Node.js
+
+run-name: ${{ github.actor }} - Desplegando Backend a Producción
+
+on:
+  workflow_run:
+    workflows: ["CI - Backend Node.js"]
+    types:
+      - completed
+    branches:
+      - main 
+
+jobs:
+  desplegar-backend-prod:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v6
+
+      - name: Preparar infraestructura AWS
+        run: echo "Verificando estado de la infraestructura de producción en AWS."
+
+      - name: Publicar Backend
+        run: echo "Desplegando versión estable de Node.js en AWS."
+
+      - name: Pruebas de humo
+        run: echo "Ejecutando verificaciones de respuesta rápida en producción."

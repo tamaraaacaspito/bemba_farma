@@ -1,0 +1,21 @@
+name: Deploy Staging - Frontend React
+
+run-name: ${{ github.actor }} - Desplegando Frontend a Staging
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  desplegar-frontend-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v6
+
+      - name: Compilar producción
+        run: echo "Generando build optimizado de React."
+
+      - name: Publicar en S3 y CloudFront
+        run: echo "Subiendo estáticos al bucket S3 de Staging y refrescando CloudFront."

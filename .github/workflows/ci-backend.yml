@@ -1,0 +1,33 @@
+name: CI - Backend Node.js
+
+run-name: ${{ github.actor }} - Validando Backend
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  validar-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v6
+
+      - name: Preparar entorno
+        run: echo "Preparando entorno Ubuntu con Node.js y npm para el backend."
+
+      - name: Instalar dependencias
+        run: echo "Instalando dependencias de Node.js mediante npm install."
+
+      - name: Analizar código
+        run: echo "Ejecutando ESLint en la aplicación Node.js."
+
+      - name: Pruebas unitarias
+        run: echo "Ejecutando pruebas de los endpoints y lógica de negocio."

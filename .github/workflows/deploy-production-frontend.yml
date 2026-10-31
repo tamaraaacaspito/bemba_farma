@@ -1,0 +1,28 @@
+name: Deploy Production - Frontend React
+
+run-name: ${{ github.actor }} - Desplegando Frontend a Producción
+
+on:
+  workflow_run:
+    workflows: ["CI - Frontend React"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  desplegar-frontend-prod:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v6
+
+      - name: Compilar versión final
+        run: echo "Construyendo paquete final de React."
+
+      - name: Publicar en S3 Producción
+        run: echo "Publicando archivos finales en S3 y distribución CloudFront de Producción."
+
+      - name: Finalizar entrega
+        run: echo "Despliegue finalizado exitosamente y registrado."
