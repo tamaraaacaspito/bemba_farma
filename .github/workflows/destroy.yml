@@ -29,8 +29,9 @@ jobs:
         with:
           terraform_version: "1.10.5"
 
-      - name: Crear backend.hcl dinámicamente
+      - name: Inicializar y destruir infraestructura en Terraform
         run: |
+          # 1. Crear el archivo backend.hcl dinámicamente con las variables de GitHub
           cat <<EOF > terraform/backend.hcl
           bucket       = "${{ vars.TF_BUCKET_NAME }}"
           key          = "lab09/dev/terraform.tfstate"
@@ -38,6 +39,10 @@ jobs:
           encrypt      = true
           use_lockfile = true
           EOF
+
+          cd terraform
+          terraform init -backend-config=backend.hcl
+          terraform destroy -auto-approve
 
       - name: Inicializar Terraform con el backend S3
         run: terraform -chdir=terraform init -backend-config=backend.hcl
