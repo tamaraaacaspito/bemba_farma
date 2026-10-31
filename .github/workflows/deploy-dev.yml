@@ -1,0 +1,26 @@
+name: Deploy dev
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [development]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::174655393856:role/lab09-github-actions-dev
+          aws-region: us-east-2
+
+      - name: Verificar identidad
+        run: aws sts get-caller-identity
