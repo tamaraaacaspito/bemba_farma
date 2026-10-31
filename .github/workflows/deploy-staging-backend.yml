@@ -7,7 +7,6 @@ on:
     branches:
       - development  
 
-
 permissions:
   contents: read
   id-token: write
@@ -26,6 +25,12 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}  
           aws-region: ${{ vars.AWS_REGION }}       
+
+      
+      - name: Configurar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.5" 
 
       - name: Inicializar Terraform con backend S3
         run: |
