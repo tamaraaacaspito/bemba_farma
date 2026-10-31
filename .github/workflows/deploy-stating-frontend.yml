@@ -7,7 +7,6 @@ on:
     branches:
       - development  
 
-
 permissions:
   contents: read
   id-token: write
@@ -27,13 +26,22 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}  
           aws-region: ${{ vars.AWS_REGION }}      
 
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json 
+
       - name: Instalar dependencias y compilar producción
+        working-directory: frontend 
         run: |
-          npm install
+          npm ci
           npm run build
           echo "Generando build optimizado de React."
 
       - name: Publicar en S3 y CloudFront
         run: |
-          # Aquí iría tu comando real de AWS CLI, por ejemplo: aws s3 sync dist/ s3://tu-bucket-staging/
+          # Reemplaza 'frontend/dist' o 'frontend/build' según la ruta de compilación real
+          # aws s3 sync frontend/dist/ s3://tu-bucket-staging/ --delete
           echo "Subiendo estáticos al bucket S3 de Staging y refrescando CloudFront."
