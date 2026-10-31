@@ -1,50 +1,41 @@
-name: Deploy Staging - Backend Node.js
-
-run-name: ${{ github.actor }} - Desplegando Backend a Staging (dev)
+name: deploy
 
 on:
   push:
-    branches:
-      - development  
+    branches: [development]
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  desplegar-backend-staging:
+  apply:
     runs-on: ubuntu-latest
-    environment: dev  
-
+    environment: dev
     steps:
-      - name: Checkout del repositorio
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - name: Configurar credenciales AWS mediante OIDC
-        uses: aws-actions/configure-aws-credentials@v6
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}  
-          aws-region: ${{ vars.AWS_REGION }}       
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
 
-      
-      - name: Configurar Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.10.5" 
+      - uses: hashicorp/setup-terraform@v3
 
-      - name: Inicializar Terraform con backend S3
-        run: |
-          terraform -chdir=terraform init \
-            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
-            -backend-config="key=lab09/dev/terraform.tfstate" \
-            -backend-config="region=${{ vars.AWS_REGION }}"
+      - name: Init
+        run: >
+          terraform -chdir=terraform init
+          -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
+          -backend-config="key=lab09/dev/terraform.tfstate"
+          -backend-config="region=${{ vars.AWS_REGION }}"
+          -backend-config="encrypt=true"
+          -backend-config="use_lockfile=true"
 
-      - name: Validar y planificar infraestructura
-        run: |
-          terraform -chdir=terraform validate
-          terraform -chdir=terraform plan
+      - name: Validate
+        run: terraform -chdir=terraform validate
 
-      - name: Aplicar cambios en Terraform (Despliegue)
-        run: |
-          terraform -chdir=terraform apply -auto-approve
-          echo "Despliegue en el entorno dev completado exitosamente."
+      - name: Plan
+        run: terraform -chdir=terraform plan
+
+      - name: Apply
+        run: terraform -chdir=terraform apply -auto-approve
