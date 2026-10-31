@@ -203,7 +203,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                         <h1 className="text-3xl font-black tracking-tighter flex items-center gap-2 italic">
-                            EKA <span className="font-light not-italic opacity-70">Dashboard</span>
+                            BembaFarma <span className="font-light not-italic opacity-70">Dashboard</span>
                         </h1>
                         <div className="flex items-center gap-3 mt-1.5">
                             <span className="flex items-center gap-1.5 text-[10px] bg-emerald-400/20 text-emerald-300 px-3 py-1 rounded-full font-black uppercase tracking-widest border border-emerald-400/20">
@@ -268,7 +268,7 @@ export default function Dashboard() {
                         <RefreshCw size={22} />
                     </button>
                     <div className="text-right text-sm border-l border-white/20 pl-4">
-                        <p className="font-bold text-white text-base leading-none">{usuario?.nombre || 'Admin EKA'}</p>
+                        <p className="font-bold text-white text-base leading-none">{usuario?.nombre || 'Admin BembaFarma'}</p>
                         <p className="text-[10px] font-black text-white/50 uppercase mt-1 tracking-widest">Control Center</p>
                     </div>
                 </div>

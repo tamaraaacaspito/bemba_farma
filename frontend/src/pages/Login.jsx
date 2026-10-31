@@ -29,7 +29,7 @@ export default function Login() {
         setCargando(true);
         try {
             await login(email.trim(), password);
-            toast.success('Bienvenido a Droguería EKA');
+            toast.success('Bienvenido a BembaFarma');
             navigate('/dashboard', { replace: true });
         } catch (err) {
             const status = err.response?.status;
@@ -47,8 +47,8 @@ export default function Login() {
         localStorage.setItem('eka_token', 'dev-token-sin-bd-2026');
         localStorage.setItem('eka_usuario', JSON.stringify({
             id: 1,
-            nombre: 'Admin EKA (Demo)',
-            email: 'admin@drogueria-eka.com',
+            nombre: 'Admin BembaFarma (Demo)',
+            email: 'admin@bembafarma.com',
             rol: 'ADMIN',
             estado: 1
         }));
@@ -59,7 +59,7 @@ export default function Login() {
     return (
         <div className="min-h-screen flex">
 
-            {/* Panel izquierdo — branding EKA */}
+            {/* Panel izquierdo — branding BembaFarma */}
             <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center p-12 relative overflow-hidden"
                 style={{ backgroundColor: '#1C1C2E' }}>
 
@@ -72,15 +72,15 @@ export default function Login() {
                 </div>
 
                 <div className="relative z-10 text-center max-w-md">
-                    {/* Logo cuadrado EKA */}
+                    {/* Logo cuadrado BembaFarma */}
                     <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-8
                         font-bold text-white text-2xl tracking-wider shadow-2xl"
                         style={{ backgroundColor: '#2ABAB4' }}>
-                        EKA
+                        BF
                     </div>
 
                     <h1 className="text-white text-3xl font-bold mb-2">
-                        Droguería EKA S.A.C.
+                        BembaFarma S.A.C.
                     </h1>
                     <p className="text-slate-400 text-sm mb-10">
                         Sistema de Gestión de Inventarios
@@ -109,7 +109,7 @@ export default function Login() {
                 </div>
 
                 <p className="absolute bottom-6 text-slate-600 text-xs">
-                    © 2026 Droguería EKA S.A.C.
+                    © 2026 BembaFarma S.A.C.
                 </p>
             </div>
 
@@ -121,9 +121,9 @@ export default function Login() {
                     <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto
                         font-bold text-white text-lg mb-3"
                         style={{ backgroundColor: '#2ABAB4' }}>
-                        EKA
+                        BF
                     </div>
-                    <h1 className="text-slate-800 text-xl font-bold">Droguería EKA S.A.C.</h1>
+                    <h1 className="text-slate-800 text-xl font-bold">BembaFarma S.A.C.</h1>
                 </div>
 
                 <div className="w-full max-w-sm">
@@ -147,7 +147,7 @@ export default function Login() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="usuario@drogueria-eka.com"
+                                    placeholder="usuario@bembafarma.com"
                                     disabled={cargando}
                                     className="w-full pl-11 pr-4 py-3 bg-white border border-slate-300 rounded-xl text-sm
                                         text-slate-800 placeholder:text-slate-400 outline-none transition-all duration-200
@@ -227,7 +227,7 @@ export default function Login() {
                     </form>
 
                     <p className="text-center text-slate-400 text-xs mt-8">
-                        Droguería EKA S.A.C. — Sistema de Inventarios v1.0
+                        BembaFarma S.A.C. — Sistema de Inventarios v1.0
                     </p>
                 </div>
             </div>

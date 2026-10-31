@@ -332,7 +332,7 @@ function ModalFormUsuario({ modo, usuarioActual, onClose, onSuccess }) {
                                 value={formData.email}
                                 onChange={e => setFormData({...formData, email: e.target.value})}
                                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-                                placeholder="usuario@drogueriaeka.com"
+                                placeholder="usuario@bembafarma.com"
                             />
                         </div>
                         <div>

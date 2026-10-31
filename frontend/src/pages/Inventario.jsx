@@ -597,7 +597,7 @@ export default function Inventario() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Código</label>
-                                    <input required disabled={modoModal === 'EDITAR'} value={formData.codigo} onChange={(e) => setFormData({...formData, codigo: e.target.value})} type="text" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-60" placeholder="Ej: EKA-001" />
+                                    <input required disabled={modoModal === 'EDITAR'} value={formData.codigo} onChange={(e) => setFormData({...formData, codigo: e.target.value})} type="text" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-60" placeholder="Ej: BF-001" />
                                 </div>
                                 <div className="sm:col-span-2">
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Nombre Comercial</label>
@@ -755,7 +755,7 @@ export default function Inventario() {
 
                             <div className="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
                                 <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                                    Droguería EKA S.A.C.
+                                    BembaFarma S.A.C.
                                 </div>
                                 <button 
                                     onClick={() => setShowDetailModal(false)}

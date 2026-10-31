@@ -66,7 +66,7 @@ export default function Ajustes() {
                     <div className="space-y-4">
                         <div>
                             <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Nombre Completo</p>
-                            <p className="text-slate-800 font-medium">{usuario?.nombre || 'Gestor EKA'}</p>
+                            <p className="text-slate-800 font-medium">{usuario?.nombre || 'Gestor BembaFarma'}</p>
                         </div>
                         <div className="border-t border-slate-100 pt-4">
                             <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Rol de Acceso</p>

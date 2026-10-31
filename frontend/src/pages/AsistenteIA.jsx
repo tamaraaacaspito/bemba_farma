@@ -25,7 +25,7 @@ export default function AsistenteIA() {
         setMessages([
             {
                 role: 'assistant',
-                content: `¡Hola ${usuario?.nombre ? usuario.nombre.split(' ')[0] : ''}! Soy el asistente inteligente de **EKA**. Puedes preguntarme sobre el inventario, lotes próximos a vencer, movimientos recientes o stock crítico.`
+                content: `¡Hola ${usuario?.nombre ? usuario.nombre.split(' ')[0] : ''}! Soy el asistente inteligente de **BembaFarma**. Puedes preguntarme sobre el inventario, lotes próximos a vencer, movimientos recientes o stock crítico.`
             }
         ]);
     }, [chatKey, usuario]);
@@ -83,7 +83,7 @@ export default function AsistenteIA() {
             localStorage.removeItem(chatKey);
             setMessages([{
                 role: 'assistant',
-                content: `¡Hola ${usuario?.nombre ? usuario.nombre.split(' ')[0] : ''}! Soy el asistente inteligente de **EKA**. ¿En qué puedo ayudarte hoy?`
+                content: `¡Hola ${usuario?.nombre ? usuario.nombre.split(' ')[0] : ''}! Soy el asistente inteligente de **BembaFarma**. ¿En qué puedo ayudarte hoy?`
             }]);
         }
     };
@@ -98,7 +98,7 @@ export default function AsistenteIA() {
                     </div>
                     <div>
                         <h1 className="text-xl font-bold text-slate-800 tracking-tight">Asistente IA</h1>
-                        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Droguería EKA S.A.C.</p>
+                        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">BembaFarma S.A.C.</p>
                     </div>
                 </div>
                 <button 

@@ -39,7 +39,7 @@ function ProtectedRoute({ children }) {
             <div className="min-h-screen flex items-center justify-center bg-eka-700">
                 <div className="text-white text-center">
                     <div className="animate-spin text-4xl mb-4">⚕️</div>
-                    <p className="text-lg font-medium">Cargando Droguería EKA...</p>
+                    <p className="text-lg font-medium">Cargando BembaFarma...</p>
                 </div>
             </div>
         );

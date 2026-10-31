@@ -84,13 +84,13 @@ export default function Layout() {
                 {/* Logo */}
                 <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10">
                     {/* Cuadrado teal con inicial */}
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-white text-sm"
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 font-bold text-white text-xs tracking-tight"
                         style={{ backgroundColor: '#2ABAB4' }}>
-                        EKA
+                        BF
                     </div>
                     {!collapsed && (
                         <div className="leading-tight overflow-hidden">
-                            <p className="text-white font-semibold text-sm truncate">Droguería EKA</p>
+                            <p className="text-white font-semibold text-sm truncate">BembaFarma</p>
                             <p className="text-xs" style={{ color: '#2ABAB4' }}>S.A.C.</p>
                         </div>
                     )}
@@ -200,7 +200,7 @@ export default function Layout() {
 
                         {/* Breadcrumb / título */}
                         <div className="hidden md:flex items-center gap-2 text-sm text-slate-500">
-                            <span className="font-medium text-slate-700">Droguería EKA S.A.C.</span>
+                            <span className="font-medium text-slate-700">BembaFarma S.A.C.</span>
                             <ChevronRight size={14} />
                             <span>Sistema de Inventarios</span>
                         </div>
