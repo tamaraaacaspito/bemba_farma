@@ -1,18 +1,94 @@
-name: Github Actions demo
+name: Pipeline BembaFarma
 
-run-name: ${{ github.actor }} esta ejecutando un pipeline
-on: [push]
+run-name: ${{ github.actor }} ejecuta el pipeline
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - develop
+      - main
+
+  pull_request:
+    branches:
+      - develop
+      - main
 
 jobs:
-  Saludar-Hello-World:
+
+  Analizar-Cambios:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Este job ha sido ejecutado ${{ github.event_name }}"
-      
-      - run: echo "El nombre de la rama es ${{ github.ref }}. Y el repositorio es ${{ github.repository }}"
-      
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        
-      - name: Listar los archivos del repositorio
-        run: ls ${{ github.workspace }}
+      - name: Identificar estrategia
+        run: echo "Identificar la rama de origen, el tipo de evento y el destino de los cambios. Las funcionalidades se desarrollan en feature/* y se integran mediante Pull Request."
+
+  Validar-Proyecto:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preparar entorno
+        run: echo "Preparar un entorno Ubuntu con Node.js y npm para trabajar con el frontend React y el backend Node.js."
+
+      - name: Instalar dependencias
+        run: echo "Instalar las dependencias del frontend y backend utilizando npm y los archivos package.json y package-lock.json."
+
+      - name: Analizar código
+        run: echo "Ejecutar ESLint para identificar errores de sintaxis, estilo y posibles problemas en el código React y Node.js."
+
+      - name: Ejecutar pruebas
+        run: echo "Ejecutar pruebas unitarias y de integración para verificar los componentes React, endpoints y lógica del backend."
+
+      - name: Verificar compilación
+        run: echo "Construir la aplicación React para producción y verificar que el backend Node.js no presente errores de compilación o configuración."
+
+  Integracion-Desarrollo:
+    needs: Validar-Proyecto
+    if: github.event_name == 'pull_request' && github.base_ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Revisar integración
+        run: echo "Validar los cambios de la rama feature/* antes de integrarlos mediante Pull Request hacia develop. Resolver conflictos y verificar que las pruebas hayan sido satisfactorias."
+
+  Desplegar-Staging:
+    needs: Validar-Proyecto
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Crear o actualizar recursos
+        run: echo "Preparar o modificar los recursos AWS del ambiente de staging mediante Terraform o AWS CloudFormation, según la infraestructura definida."
+
+      - name: Desplegar frontend
+        run: echo "Generar la versión de producción de React y publicar los archivos estáticos en el bucket S3 de staging. Actualizar la distribución CloudFront."
+
+      - name: Desplegar backend
+        run: echo "Desplegar la aplicación Node.js en los servicios AWS definidos para staging, como Lambda y API Gateway, o el servicio de cómputo seleccionado."
+
+      - name: Pruebas de ambiente
+        run: echo "Ejecutar pruebas de integración y pruebas funcionales contra los endpoints y la aplicación desplegada en staging."
+
+  Validar-Produccion:
+    needs: Validar-Proyecto
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Revisar versión candidata
+        run: echo "Validar los cambios de develop antes de fusionarlos hacia main. Comprobar pruebas, integración y aprobación de la versión candidata a producción."
+
+  Desplegar-Produccion:
+    needs: Validar-Proyecto
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preparar infraestructura
+        run: echo "Verificar y actualizar los recursos AWS del ambiente de producción utilizando Terraform o AWS CloudFormation."
+
+      - name: Publicar frontend
+        run: echo "Construir React y publicar la versión estable en S3 de producción. Actualizar CloudFront para distribuir la nueva versión."
+
+      - name: Publicar backend
+        run: echo "Desplegar la versión estable de Node.js en AWS y actualizar los servicios API correspondientes."
+
+      - name: Verificar despliegue
+        run: echo "Ejecutar pruebas de humo sobre producción para verificar disponibilidad del frontend, respuesta de las APIs y funcionamiento de las operaciones principales."
+
+      - name: Finalizar entrega
+        run: echo "Registrar la versión desplegada, informar el resultado del pipeline y conservar la versión anterior como referencia para una posible reversión."
