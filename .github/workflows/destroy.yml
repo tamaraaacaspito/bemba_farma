@@ -1,4 +1,4 @@
-name: Destruir Infraestructura Terraform
+name: Destroy
 
 run-name: ${{ github.actor }} - Destruyendo infraestructura en AWS (Destroy)
 
