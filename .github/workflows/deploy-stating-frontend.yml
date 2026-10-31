@@ -42,6 +42,5 @@ jobs:
 
       - name: Publicar en S3 y CloudFront
         run: |
-          # Reemplaza 'frontend/dist' o 'frontend/build' según la ruta de compilación real
           # aws s3 sync frontend/dist/ s3://tu-bucket-staging/ --delete
           echo "Subiendo estáticos al bucket S3 de Staging y refrescando CloudFront."
