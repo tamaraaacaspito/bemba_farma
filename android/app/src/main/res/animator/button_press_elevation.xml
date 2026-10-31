@@ -1,0 +1,17 @@
+<!-- res/animator/button_press_elevation.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <objectAnimator
+            android:propertyName="translationZ"
+            android:duration="100"
+            android:valueTo="5.0"
+            android:valueType="floatType"/>
+    </item>
+    <item>
+        <objectAnimator
+            android:propertyName="translationZ"
+            android:duration="100"
+            android:valueTo="20.0"
+            android:valueType="floatType"/>
+    </item>
+</selector>

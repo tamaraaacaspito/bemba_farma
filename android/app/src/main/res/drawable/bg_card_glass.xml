@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <!-- res/drawable/bg_card_glass.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+<solid android:color="#F9FFFFFF"/> <!-- leve transparencia -->
+<corners android:radius="28dp"/>
+<stroke
+    android:width="1dp"
+    android:color="#20FFFFFF"/>
+</shape>

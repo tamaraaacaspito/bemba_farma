@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Configuración de seguridad de red.
+
+  - Por defecto: HTTPS obligatorio (cleartext deshabilitado) y solo se confía
+    en certificados del SISTEMA. Ya NO se confía en certificados de usuario,
+    lo que cierra la puerta a ataques MITM con proxies/CA instaladas.
+  - El backend de producción usa HTTPS (Azure), por lo que la app funciona
+    normalmente bajo esta política.
+  - El tráfico HTTP en claro se permite ÚNICAMENTE hacia hosts de desarrollo
+    (emulador y LAN), nunca hacia Internet.
+-->
+<network-security-config>
+
+    <!-- Política por defecto: segura para todo el tráfico -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Excepción SOLO para desarrollo local (HTTP en claro permitido) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>       <!-- emulador Android -->
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">192.168.18.65</domain>  <!-- backend en Wi-Fi -->
+        <domain includeSubdomains="true">10.81.13.251</domain>   <!-- backend en VPN -->
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+
+</network-security-config>

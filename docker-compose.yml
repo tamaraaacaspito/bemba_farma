@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Backend: API Rest Node.js
+  backend:
+    build: ./backend
+    container_name: eka-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_SERVER=${DB_SERVER}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=1433
+      - JWT_SECRET=${JWT_SECRET}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - FRONTEND_URL=http://${VM_IP}
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+  # Frontend: Sistema de Gestión de Inventarios
+  frontend:
+    build: ./frontend
+    container_name: eka-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  # Web Institucional: Landing Page pública
+  web-institucional:
+    build: ./web-institucional
+    container_name: eka-web-landing
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+networks:
+  default:
+    name: eka-network

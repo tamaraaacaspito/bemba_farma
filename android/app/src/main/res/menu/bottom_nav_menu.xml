@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Dashboard" />
+
+    <item
+        android:id="@+id/navigation_inventario"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="Inventario" />
+
+
+
+    <item
+        android:id="@+id/navigation_kardex"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="Kardex" />
+
+    <item
+        android:id="@+id/navigation_ia"
+        android:icon="@drawable/ic_ai"
+        android:title="EKA IA" />
+
+    <item
+        android:id="@+id/navigation_alertas"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="Alertas" />
+</menu>

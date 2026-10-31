@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorBackground"
+    tools:context=".ui.inventario.InventarioFragment">
+
+    <!-- Banner "Modo sin conexión" con animación fade -->
+    <LinearLayout
+        android:id="@+id/tvOfflineBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#E07B00"
+        android:gravity="center"
+        android:padding="8dp"
+        android:orientation="horizontal"
+        android:layoutAnimation="@anim/layout_animation_slide_up"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="@color/colorSurface"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Modo Offline"
+            android:textColor="@color/colorSurface"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_search_view"
+            android:elevation="4dp"
+            app:queryBackground="@android:color/transparent"
+            app:iconifiedByDefault="false"
+            app:queryHint="Buscar producto..." />
+
+        <ImageButton
+            android:id="@+id/btnFiltros"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_search_view"
+            android:elevation="4dp"
+            android:src="@android:drawable/ic_menu_manage"
+            app:tint="@color/colorPrimary" />
+    </LinearLayout>
+
+    <!-- Progress UI: Swipe Refresh Modificado -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Lista Activa de Productos -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvProductos"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="80dp"
+                android:layoutAnimation="@anim/layout_animation_slide_up"
+                tools:listitem="@layout/item_producto" />
+
+            <!-- Empty State Layout (Gone por defecto) -->
+            <LinearLayout
+                android:id="@+id/layoutEmptyState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layoutAnimation="@anim/layout_animation_slide_up"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    app:tint="@color/colorTextMuted"
+                    android:layout_marginBottom="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No hay productos"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorTextPrimary"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Intenta con otro término de búsqueda"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorTextMuted"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <!-- Skeleton Skeleton placeholders para Shimmer-->
+            <LinearLayout
+                android:id="@+id/layoutShimmer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:visibility="gone">
+                <View android:layout_width="match_parent" android:layout_height="100dp" android:layout_marginBottom="12dp" android:background="#E0E0E0" />
+                <View android:layout_width="match_parent" android:layout_height="100dp" android:layout_marginBottom="12dp" android:background="#E0E0E0" />
+                <View android:layout_width="match_parent" android:layout_height="100dp" android:layout_marginBottom="12dp" android:background="#E0E0E0" />
+            </LinearLayout>
+
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>

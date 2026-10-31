@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "584862258696",
+    "project_id": "drogueria-eka",
+    "storage_bucket": "drogueria-eka.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584862258696:android:1cd41108f4f11f845423bd",
+        "android_client_info": {
+          "package_name": "com.mypk2.drogueria_eka_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCASWBFNviBWbHtPIVg7hob5CmbUhpgLlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

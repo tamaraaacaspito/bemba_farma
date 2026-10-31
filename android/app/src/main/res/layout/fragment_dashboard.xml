@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    tools:context=".ui.dashboard.DashboardFragment">
+
+    <!-- ═══ COLLAPSING APP BAR ═══ -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:fitsSystemWindows="true"
+        app:elevation="0dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="#00000000">
+
+        <include layout="@layout/layout_offline_banner" />
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="@color/colorPrimaryDark"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_login_gradient"
+                android:contentDescription="@null"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7" />
+
+            <!-- Contenido del header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingBottom="36dp"
+                app:layout_collapseMode="parallax">
+
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hola, Administrador"
+                    android:textColor="@color/colorSurface"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvUserRole"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Panel de Inventario"
+                    android:textColor="#B3FFFFFF"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:titleTextColor="@color/colorSurface">
+
+                <ImageButton
+                    android:id="@+id/btnLogout"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Cerrar sesión"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    app:tint="@color/colorSurface" />
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- ═══ CONTENIDO SCROLLABLE ═══ -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="24dp"
+                android:layoutAnimation="@anim/layout_animation_slide_up">
+
+                <!-- ═══ SECCIÓN 1: KPI CARDS (2×2 Grid) ═══ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginTop="16dp">
+
+                    <!-- Fila 1: Total Productos + Stock Crítico -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:baselineAligned="false"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
+
+                        <!-- KPI: Total Productos -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTotalProductos"
+                            android:layout_width="0dp"
+                            android:layout_height="130dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="#1A000000"
+                            app:cardBackgroundColor="@color/colorSurface"
+                            app:rippleColor="#201A3A6B">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <FrameLayout
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_circle_blue">
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_package"
+                                        app:tint="@color/colorAccent"
+                                        android:contentDescription="@null"
+                                        android:layout_gravity="center" />
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/tvTotalItems"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="28sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorTextPrimary"
+                                    android:layout_marginTop="8dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Total Productos"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorAccent" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- KPI: Stock Crítico -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardStockCritico"
+                            android:layout_width="0dp"
+                            android:layout_height="130dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="#1A000000"
+                            app:cardBackgroundColor="@color/colorSurface"
+                            app:rippleColor="#20E07B00">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <FrameLayout
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_circle_orange">
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_alert_stock"
+                                        app:tint="@color/colorStockWarning"
+                                        android:contentDescription="@null"
+                                        android:layout_gravity="center" />
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/tvCriticos"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="28sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorTextPrimary"
+                                    android:layout_marginTop="8dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Stock Crítico"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorStockWarning" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <!-- Fila 2: Agotados + Movimientos Recientes -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp"
+                        android:baselineAligned="false"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
+
+                        <!-- KPI: Agotados -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardAgotados"
+                            android:layout_width="0dp"
+                            android:layout_height="130dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="#1A000000"
+                            app:cardBackgroundColor="@color/colorSurface"
+                            app:rippleColor="#20C0392B">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <FrameLayout
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_circle_red">
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@android:drawable/ic_delete"
+                                        app:tint="@color/colorStockCritical"
+                                        android:contentDescription="@null"
+                                        android:layout_gravity="center" />
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/tvAgotados"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="28sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorTextPrimary"
+                                    android:layout_marginTop="8dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Lotes Vencidos"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorStockCritical" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- KPI: Movimientos Recientes -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardMovimientos"
+                            android:layout_width="0dp"
+                            android:layout_height="130dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:cardCornerRadius="18dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="#1A000000"
+                            app:cardBackgroundColor="@color/colorSurface"
+                            app:rippleColor="#200D7E5C">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <FrameLayout
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_circle_green">
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_trending"
+                                        app:tint="@color/colorStockOk"
+                                        android:contentDescription="@null"
+                                        android:layout_gravity="center" />
+                                </FrameLayout>
+
+                                <TextView
+                                    android:id="@+id/tvMovimientos"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="28sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorTextPrimary"
+                                    android:layout_marginTop="8dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Movimientos"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorStockOk" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ═══ SECCIÓN 2: ACCESOS RÁPIDOS ═══ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginTop="24dp"
+                    android:baselineAligned="false"
+                    android:weightSum="2">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnQuickInventario"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="4dp"
+                        android:text="Inventario"
+                        android:textSize="11sp"
+                        android:textColor="@color/colorPrimary"
+                        app:icon="@android:drawable/ic_menu_agenda"
+                        app:iconTint="@color/colorPrimary"
+                        app:iconGravity="textStart"
+                        app:strokeColor="@color/colorPrimary"
+                        app:cornerRadius="14dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnQuickKardex"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:text="Kardex"
+                        android:textSize="11sp"
+                        android:textColor="@color/colorStockOk"
+                        app:icon="@android:drawable/ic_menu_edit"
+                        app:iconTint="@color/colorStockOk"
+                        app:iconGravity="textStart"
+                        app:strokeColor="@color/colorStockOk"
+                        app:cornerRadius="14dp" />
+
+                    <!-- Ventas en Campo eliminado: fuera del scope del área de Almacén -->
+                </LinearLayout>
+
+                <!-- ═══ SECCIÓN 3: ÚLTIMOS MOVIMIENTOS ═══ -->
+                <TextView
+                    android:id="@+id/tvMovimientosTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Últimos Movimientos"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginStart="24dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Entradas y salidas más recientes del Kardex"
+                    android:textSize="13sp"
+                    android:textColor="@color/colorTextMuted"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="4dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvMovimientos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="16dp"
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/item_movimiento" />
+
+                <!-- Empty state movimientos -->
+                <LinearLayout
+                    android:id="@+id/layoutEmptyMovimientos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:padding="24dp"
+                    android:layout_marginTop="8dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_trending"
+                        android:contentDescription="@null"
+                        app:tint="@color/colorTextMuted"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sin movimientos recientes"
+                        android:textSize="14sp"
+                        android:textColor="@color/colorTextMuted" />
+                </LinearLayout>
+
+                <!-- ═══ SECCIÓN 4: STOCK CRÍTICO ═══ -->
+                <TextView
+                    android:id="@+id/tvAlertTitles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stock Crítico"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorTextPrimary"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginStart="24dp" />
+
+                <TextView
+                    android:id="@+id/tvAlertSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Productos por debajo del stock mínimo"
+                    android:textSize="13sp"
+                    android:textColor="@color/colorTextMuted"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="4dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAlertas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="16dp"
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/item_alerta" />
+
+                <!-- Empty state stock crítico -->
+                <LinearLayout
+                    android:id="@+id/layoutEmptyAlertas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:padding="24dp"
+                    android:layout_marginTop="8dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@android:drawable/ic_dialog_info"
+                        android:contentDescription="@null"
+                        app:tint="@color/colorStockOk"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Todo en orden — sin stock crítico"
+                        android:textSize="14sp"
+                        android:textColor="@color/colorStockOk" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- FAB for Scanner -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabScanner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:text="Escanear"
+        android:textColor="@color/colorSurface"
+        app:icon="@android:drawable/ic_menu_camera"
+        app:iconTint="@color/colorSurface"
+        app:backgroundTint="@color/colorAccent" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

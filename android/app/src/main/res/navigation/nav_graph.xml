@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_dashboard">
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.mypk2.drogueria_eka_app.ui.dashboard.DashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+
+
+    <fragment
+        android:id="@+id/navigation_inventario"
+        android:name="com.mypk2.drogueria_eka_app.ui.inventario.InventarioFragment"
+        android:label="Inventario"
+        tools:layout="@layout/fragment_inventario">
+
+        <action
+            android:id="@+id/action_inventario_to_detalle"
+            app:destination="@id/detalleProductoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detalleProductoFragment"
+        android:name="com.mypk2.drogueria_eka_app.ui.inventario.DetalleProductoFragment"
+        android:label="Detalle Producto"
+        tools:layout="@layout/fragment_detalle_producto">
+
+        <argument
+            android:name="productoId"
+            app:argType="integer" />
+        <argument
+            android:name="productoNombre"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="productoCodigo"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="productoStock"
+            app:argType="float"
+            android:defaultValue="0" />
+        <argument
+            android:name="productoMinimo"
+            app:argType="float"
+            android:defaultValue="0" />
+        <argument
+            android:name="productoUnidad"
+            app:argType="string"
+            android:defaultValue="UND" />
+    </fragment>
+
+
+
+    <fragment
+        android:id="@+id/navigation_kardex"
+        android:name="com.mypk2.drogueria_eka_app.ui.kardex.KardexFragment"
+        android:label="Kardex"
+        tools:layout="@layout/fragment_kardex" />
+
+    <fragment
+        android:id="@+id/navigation_alertas"
+        android:name="com.mypk2.drogueria_eka_app.ui.alertas.CentroAlertasFragment"
+        android:label="Centro de Alertas IA"
+        tools:layout="@layout/fragment_centro_alertas">
+
+        <action
+            android:id="@+id/action_alertas_to_caducidad"
+            app:destination="@id/alertasCaducidadFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/alertasCaducidadFragment"
+        android:name="com.mypk2.drogueria_eka_app.ui.alertas.AlertasFragment"
+        android:label="Vencimientos de Lotes"
+        tools:layout="@layout/fragment_alertas" />
+
+    <fragment
+        android:id="@+id/navigation_ia"
+        android:name="com.mypk2.drogueria_eka_app.ui.asistente.ChatIaFragment"
+        android:label="EKA IA"
+        tools:layout="@layout/fragment_chat_ia" />
+
+</navigation>

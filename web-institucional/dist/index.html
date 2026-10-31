@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Droguería EKA S.A.C. | Equipos Médicos de Calidad</title>
+    <meta name="description" content="Droguería EKA S.A.C., líder en distribución de dispositivos y equipos médicos en Lima, Perú. Proveemos al sector público y privado estatal.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* ── Portal Auth Overlay ──────────────────────────────────────── */
+        .auth-overlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 9999;
+            background: rgba(10, 20, 40, 0.75);
+            backdrop-filter: blur(6px);
+            align-items: center; justify-content: center;
+        }
+        .auth-overlay.active { display: flex; }
+        .auth-modal {
+            background: #fff; border-radius: 20px; padding: 40px;
+            width: 100%; max-width: 440px;
+            max-height: 90vh;           /* nunca supera el 90% de la pantalla */
+            overflow-y: auto;           /* scroll si el contenido es largo     */
+            box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+            position: relative; animation: popIn 0.3s ease;
+            /* scroll suave y barra discreta */
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.92) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .auth-modal .close-btn {
+            position: absolute; top: 16px; right: 16px;
+            border: none; background: none; font-size: 22px; cursor: pointer; color: #94a3b8;
+        }
+        .auth-tabs { display: flex; gap: 4px; background: #f1f5f9; border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+        .auth-tab {
+            flex: 1; padding: 8px 12px; border: none; background: transparent;
+            border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; color: #64748b; transition: all .2s;
+        }
+        .auth-tab.active { background: #fff; color: #0ea5e9; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        .auth-form-panel { display: none; }
+        .auth-form-panel.active { display: block; }
+        /* Panel de registro: scroll interno si la pantalla es muy pequeña */
+        #panel-registro.active { display: flex; flex-direction: column; }
+        .auth-modal h2 { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+        .auth-modal p.sub { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+        .auth-modal .form-group { margin-bottom: 14px; }
+        .auth-modal label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 5px; }
+        .auth-modal input, .auth-modal select {
+            width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px;
+            font-family: inherit; font-size: 14px; color: #0f172a; box-sizing: border-box; transition: border .2s;
+        }
+        .auth-modal input:focus, .auth-modal select:focus { outline: none; border-color: #0ea5e9; }
+        .btn-auth { 
+            width: 100%; padding: 12px; background: linear-gradient(135deg, #0ea5e9, #2ABAB4);
+            color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer;
+            margin-top: 8px; transition: opacity .2s;
+        }
+        .btn-auth:hover { opacity: 0.9; }
+        .auth-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; display: none; }
+        .auth-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; display: none; }
+
+        /* ── Catálogo Interactivo ────────────────────────────────────── */
+        .catalog-section { background: #f8fafc; padding: 70px 0; }
+        .catalog-search { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+        .catalog-search input {
+            flex: 1; min-width: 200px; padding: 12px 18px; border: 1.5px solid #e2e8f0;
+            border-radius: 12px; font-family: inherit; font-size: 14px;
+        }
+        .catalog-search select {
+            padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-family: inherit; font-size: 14px; background: #fff;
+        }
+        .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+        .catalog-card {
+            background: #fff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 20px;
+            display: flex; flex-direction: column; gap: 10px;
+            transition: box-shadow .2s, border-color .2s;
+        }
+        .catalog-card:hover { box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15); border-color: #bae6fd; }
+        .catalog-card .cat-badge {
+            display: inline-block; padding: 2px 10px; background: #e0f2fe; color: #0369a1;
+            border-radius: 99px; font-size: 11px; font-weight: 600; align-self: flex-start;
+        }
+        .catalog-card h4 { font-size: 14px; font-weight: 700; color: #0f172a; margin: 0; line-height: 1.4; }
+        .catalog-card .code { font-size: 11px; color: #94a3b8; font-family: monospace; }
+        .catalog-card .stock-row { display: flex; justify-content: space-between; align-items: center; }
+        .catalog-card .price { font-size: 16px; font-weight: 800; color: #0ea5e9; }
+        .catalog-card .stock { font-size: 12px; color: #64748b; }
+        .catalog-card .qty-row { display: flex; align-items: center; gap: 8px; }
+        .catalog-card .qty-input {
+            width: 60px; padding: 6px 10px; border: 1.5px solid #e2e8f0; border-radius: 8px;
+            text-align: center; font-weight: 700; font-size: 14px;
+        }
+        .lote-selector-row {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--slate-600);
+        }
+        .lote-select {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid var(--slate-200);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--indigo-700);
+            background: var(--slate-50);
+            cursor: pointer;
+        }
+        .no-lote { color: var(--slate-400); font-style: italic; }
+        .cart-item-info { display: flex; flex-direction: column; flex: 1; }
+        .cart-item-lote { font-size: 10px; color: var(--slate-400); font-weight: 500; }
+        .btn-add-cart {
+            flex: 1; padding: 8px 12px; background: #0ea5e9; color: white; border: none;
+            border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background .2s;
+        }
+        .btn-add-cart:hover { background: #0284c7; }
+        .btn-add-cart.added { background: #22c55e; }
+
+        /* ── Carrito Flotante ────────────────────────────────────────── */
+        .cart-fab {
+            position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+            background: linear-gradient(135deg, #0ea5e9, #2ABAB4); color: white;
+            border: none; border-radius: 50%; width: 60px; height: 60px;
+            font-size: 24px; cursor: pointer; box-shadow: 0 8px 24px rgba(14,165,233,0.4);
+            display: flex; align-items: center; justify-content: center; transition: transform .2s;
+        }
+        .cart-fab:hover { transform: scale(1.1); }
+        .cart-fab .badge {
+            position: absolute; top: -4px; right: -4px;
+            background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px;
+            font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+            display: none;
+        }
+
+        /* ── Carrito Panel ───────────────────────────────────────────── */
+        .cart-panel {
+            position: fixed; bottom: 100px; right: 30px; z-index: 999;
+            background: white; border-radius: 20px; width: 360px; max-height: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2); display: none; flex-direction: column;
+            overflow: hidden; animation: slideUp .3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .cart-panel.open { display: flex; }
+        .cart-header { padding: 16px 20px; background: linear-gradient(135deg, #0ea5e9, #2ABAB4); color: white; }
+        .cart-header h3 { margin: 0; font-size: 16px; font-weight: 700; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 12px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px; margin-bottom: 8px; }
+        .cart-item-name { font-size: 12px; font-weight: 600; color: #0f172a; flex: 1; margin-right: 8px; }
+        .cart-item-qty { font-size: 12px; color: #0ea5e9; font-weight: 700; }
+        .cart-item-remove { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 16px; }
+        .cart-empty { text-align: center; padding: 30px; color: #94a3b8; font-size: 13px; }
+        .cart-footer { padding: 12px 16px; border-top: 1px solid #f1f5f9; }
+        .btn-checkout {
+            width: 100%; padding: 12px; background: linear-gradient(135deg, #0ea5e9, #2ABAB4);
+            color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer;
+        }
+
+        /* ── Navbar B2B ──────────────────────────────────────────────── */
+        .nav-user-btn {
+            padding: 8px 18px; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.4);
+            color: white; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all .2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .nav-user-btn:hover { background: rgba(255,255,255,0.25); }
+
+        /* Loading spinner */
+        .catalog-loading { text-align: center; padding: 60px; color: #94a3b8; }
+        .spinner { width: 36px; height: 36px; border: 3px solid #e2e8f0; border-top-color: #0ea5e9; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Historial Panel (Drawer lateral) ────────────────────────── */
+        .historial-overlay { display:none; position:fixed; inset:0; z-index:8888; background:rgba(0,0,0,0.5); }
+        .historial-overlay.open { display:block; }
+        .historial-drawer {
+            position:fixed; top:0; right:-420px; width:420px; height:100vh; z-index:8889;
+            background:#fff; box-shadow:-10px 0 40px rgba(0,0,0,0.15); transition: right .35s ease;
+            display:flex; flex-direction:column; overflow:hidden;
+        }
+        .historial-drawer.open { right:0; }
+        .historial-header { padding:20px 24px; background:linear-gradient(135deg,#0ea5e9,#2ABAB4); color:white; display:flex; justify-content:space-between; align-items:center; }
+        .historial-header h3 { margin:0; font-size:16px; font-weight:700; }
+        .historial-close { background:none; border:none; color:white; font-size:22px; cursor:pointer; }
+        .historial-body { flex:1; overflow-y:auto; padding:16px; }
+        .pedido-card { background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:16px; margin-bottom:12px; }
+        .pedido-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .pedido-id { font-size:11px; color:#94a3b8; font-family:monospace; }
+        .pedido-fecha { font-size:11px; color:#94a3b8; }
+        .pedido-requerimiento { font-size:13px; color:#374151; line-height:1.5; margin:8px 0; }
+        .badge-nuevo { background:#fff7ed; color:#ea580c; border:1px solid #fdba74; padding:3px 10px; border-radius:99px; font-size:11px; font-weight:700; }
+        .badge-en-proceso { background:#eff6ff; color:#2563eb; border:1px solid #93c5fd; padding:3px 10px; border-radius:99px; font-size:11px; font-weight:700; }
+        .badge-atendido { background:#f0fdf4; color:#16a34a; border:1px solid #86efac; padding:3px 10px; border-radius:99px; font-size:11px; font-weight:700; }
+        .badge-descartado { background:#fef2f2; color:#dc2626; border:1px solid #fca5a5; padding:3px 10px; border-radius:99px; font-size:11px; font-weight:700; }
+        .historial-empty { text-align:center; padding:48px 24px; color:#94a3b8; }
+        /* ── Alerta de login requerido en el formulario ───────────────── */
+        .login-required-msg {
+            display:none; background:linear-gradient(135deg,#eff6ff,#f0f9ff);
+            border:1.5px solid #bae6fd; border-radius:14px; padding:20px 24px; text-align:center; margin-bottom:16px;
+        }
+        .login-required-msg.visible { display:block; }
+        .form-logged-in-badge {
+            display:none; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;
+            padding:10px 14px; margin-bottom:16px; font-size:13px; color:#15803d;
+        }
+        .form-logged-in-badge.visible { display:block; }
+        /* Deshabilitar campos si no hay sesion */
+        input.locked, textarea.locked, select.locked { background:#f8fafc; cursor:not-allowed; opacity:.6; }
+    </style>
+  <link rel="stylesheet" crossorigin href="/assets/index-rSBcNeXl.css">
+</head>
+<body>
+
+    <!-- ── AUTH MODAL ──────────────────────────────────────────────────── -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-modal">
+            <button class="close-btn" onclick="closeAuth()"><i class="ph ph-x"></i></button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Iniciar Sesión</button>
+                <button class="auth-tab" onclick="switchAuthTab('registro')">Crear Cuenta</button>
+            </div>
+
+            <!-- Login -->
+            <div class="auth-form-panel active" id="panel-login">
+                <h2>Bienvenido de vuelta</h2>
+                <p class="sub">Portal de clientes institucionales de Droguería EKA</p>
+                <div class="auth-error" id="login-error"></div>
+                <div class="auth-success" id="login-success"></div>
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" id="login-email" placeholder="correo@entidad.pe">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="login-password" placeholder="••••••••">
+                </div>
+                <button class="btn-auth" onclick="doLogin()">
+                    Ingresar al Portal <i class="ph ph-sign-in"></i>
+                </button>
+            </div>
+
+            <!-- Registro -->
+            <div class="auth-form-panel" id="panel-registro">
+                <h2>Crear cuenta B2B</h2>
+                <p class="sub">Accede a nuestro catálogo exclusivo y haz seguimiento de tus pedidos</p>
+                <div class="auth-error" id="reg-error"></div>
+                <div class="auth-success" id="reg-success"></div>
+                <div class="form-group">
+                    <label>Nombre Completo *</label>
+                    <input type="text" id="reg-nombre" placeholder="Dr. Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label>Entidad / Hospital</label>
+                    <input type="text" id="reg-entidad" placeholder="Hospital Nacional Loayza">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Entidad</label>
+                    <select id="reg-tipo">
+                        <option value="HOSPITAL">Hospital</option>
+                        <option value="CLINICA">Clínica Privada</option>
+                        <option value="ESSALUD">EsSalud</option>
+                        <option value="FARMACIA">Farmacia</option>
+                        <option value="OTRO">Otro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>RUC / DNI</label>
+                    <input type="text" id="reg-ruc" placeholder="20XXXXXXXXX (opcional)">
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico *</label>
+                    <input type="email" id="reg-email" placeholder="correo@entidad.pe">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="reg-telefono" placeholder="999 999 999">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña *</label>
+                    <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres">
+                </div>
+                <button class="btn-auth" onclick="doRegistro()">
+                    Crear Mi Cuenta <i class="ph ph-user-plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── CARRITO PANEL ───────────────────────────────────────────────── -->
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h3><i class="ph ph-shopping-cart"></i> Mi Cotización</h3>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty">Aún no has añadido productos.<br>Búscalos más abajo.</div>
+        </div>
+        <div class="cart-footer">
+            <button class="btn-checkout" onclick="irACotizacion()">
+                Enviar Cotización <i class="ph ph-paper-plane-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ── HISTORIAL DRAWER ─────────────────────────────────────────────── -->
+    <div class="historial-overlay" id="historialOverlay" onclick="closeHistorial()"></div>
+    <div class="historial-drawer" id="historialDrawer">
+        <div class="historial-header">
+            <h3><i class="ph ph-clock-clockwise"></i> Mis Pedidos</h3>
+            <button class="historial-close" onclick="closeHistorial()"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="historial-body" id="historialBody">
+            <div class="historial-empty"><i class="ph ph-package" style="font-size:40px;display:block;margin-bottom:12px;"></i>No tienes pedidos aún.</div>
+        </div>
+    </div>
+
+    <!-- FAB Carrito -->
+    <button class="cart-fab" onclick="toggleCart()">
+        <i class="ph ph-shopping-cart"></i>
+        <span class="badge" id="cartBadge">0</span>
+    </button>
+
+    <!-- ── HEADER ──────────────────────────────────────────────────────── -->
+    <header class="header" id="header">
+        <div class="container header-container">
+            <div class="logo">
+                <i class="ph-fill ph-heartbeats"></i>
+                <span>Droguería <strong>EKA</strong></span>
+            </div>
+            <nav class="nav">
+                <a href="#inicio" class="nav-link">Inicio</a>
+                <a href="#nosotros" class="nav-link">Nosotros</a>
+                <a href="#catalogo" class="nav-link">Catálogo</a>
+                <a href="#clientes" class="nav-link">Clientes</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+                <button class="nav-user-btn" id="navUserBtn" onclick="openAuth()">
+                    <i class="ph ph-user"></i> <span id="navUserLabel">Iniciar Sesión</span>
+                </button>
+                <button class="nav-user-btn" id="navHistorialBtn" onclick="openHistorial()" style="display:none;">
+                    <i class="ph ph-clock-clockwise"></i> Mis Pedidos
+                </button>
+                <button class="nav-user-btn" id="navLogoutBtn" onclick="doLogout()" style="display:none;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);">
+                    <i class="ph ph-sign-out"></i> Salir
+                </button>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="Abrir menú">
+                <i class="ph ph-list"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ── HERO ───────────────────────────────────────────────────────── -->
+    <section class="hero" id="inicio">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <span class="hero-badge">Calidad Certificada en Dispositivos Médicos</span>
+            <h1 class="hero-title">Innovación y Seguridad para la <span class="text-gradient">Salud del Perú</span></h1>
+            <p class="hero-subtitle">Distribución especializada de material biomédico y quirúrgico para el sector hospitalario público y clínicas privadas.</p>
+            <div class="hero-actions">
+                <a href="#catalogo" class="btn btn-primary btn-lg">Ver Catálogo en Línea</a>
+                <a href="#contacto" class="btn btn-outline btn-lg">Solicitar Cotización</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── MISIÓN + VISIÓN ─────────────────────────────────────────────── -->
+    <section class="about section-padding bg-light" id="nosotros">
+        <div class="container">
+            <div class="section-header">
+                <h2>¿Quiénes Somos?</h2>
+                <p>Nuestra razón de ser y hacia dónde nos dirigimos en el sector salud.</p>
+            </div>
+            <div class="about-grid">
+                <div class="card glass-card">
+                    <div class="card-icon bg-blue-light"><i class="ph ph-target"></i></div>
+                    <h3>Nuestra Misión</h3>
+                    <p>Proveer a las instituciones de salud del Perú con dispositivos médicos confiables, seguros y de alta tecnología, garantizando la trazabilidad absoluta de nuestros productos y un servicio al cliente excepcional para contribuir a mejorar la calidad de vida de los pacientes.</p>
+                </div>
+                <div class="card glass-card">
+                    <div class="card-icon bg-blue-light"><i class="ph ph-eye"></i></div>
+                    <h3>Nuestra Visión</h3>
+                    <p>Ser reconocidos para el 2028 como la droguería líder y más innovadora a nivel nacional en la gestión y distribución de material médico especializado, destacando por nuestros rigurosos estándares de calidad técnica biomédica.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CATÁLOGO INTERACTIVO ────────────────────────────────────────── -->
+    <section class="catalog-section section-padding" id="catalogo">
+        <div class="container">
+            <div class="section-header">
+                <h2>Catálogo de Productos</h2>
+                <p>Consulta disponibilidad y precios en tiempo real. Agrega productos a tu cotización.</p>
+            </div>
+            <div class="catalog-search">
+                <input type="text" id="catSearch" placeholder="🔍  Buscar producto (ej. sonda, buretrol, mascarilla...)" oninput="buscarCatalogo()">
+                <select id="catCategoria" onchange="buscarCatalogo()">
+                    <option value="">Todas las categorías</option>
+                </select>
+            </div>
+            <div class="catalog-grid" id="catalogoGrid">
+                <div class="catalog-loading">
+                    <div class="spinner"></div>
+                    <p>Cargando catálogo actualizado...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CLIENTES ────────────────────────────────────────────────────── -->
+    <section class="clients section-padding bg-blue" id="clientes">
+        <div class="container text-center">
+            <h2 class="text-white mb-4">La confianza de las mejores instituciones de salud en el Perú</h2>
+            <div class="clients-ticker">
+                <div class="clients-track">
+                    <span class="client-logo">🏥 Hospital Arzobispo Loayza</span>
+                    <span class="client-logo">🏥 Hospital Cayetano Heredia</span>
+                    <span class="client-logo">🏥 Hospital Regional de Ica</span>
+                    <span class="client-logo">🏥 INEN</span>
+                    <span class="client-logo">🏥 Clínica Internacional</span>
+                    <span class="client-logo">🏥 EsSalud (Rebagliati)</span>
+                    <span class="client-logo">🏥 Hospital Arzobispo Loayza</span>
+                    <span class="client-logo">🏥 Hospital Cayetano Heredia</span>
+                    <span class="client-logo">🏥 Hospital Regional de Ica</span>
+                    <span class="client-logo">🏥 INEN</span>
+                    <span class="client-logo">🏥 Clínica Internacional</span>
+                    <span class="client-logo">🏥 EsSalud (Rebagliati)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CONTACTO ────────────────────────────────────────────────────── -->
+    <section class="contact section-padding" id="contacto">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-info">
+                    <h2>Comuníquese con nosotros</h2>
+                    <p>Nuestro equipo de asesores comerciales y químicos farmacéuticos está listo para atender sus requerimientos al por mayor.</p>
+                    <ul class="contact-list">
+                        <li>
+                            <div class="icon-circle"><i class="ph ph-map-pin"></i></div>
+                            <div><strong>Dirección</strong><span>Jr. Yungay 1817A, Chacra Ríos Norte, Cercado de Lima</span></div>
+                        </li>
+                        <li>
+                            <div class="icon-circle"><i class="ph ph-phone"></i></div>
+                            <div><strong>Teléfonos</strong><span>+51 (01) 425-1122 <br> +51 987 654 321</span></div>
+                        </li>
+                        <li>
+                            <div class="icon-circle"><i class="ph ph-envelope-simple"></i></div>
+                            <div><strong>Correo Electrónico</strong><span>ventas@drogueriaeka.com.pe</span></div>
+                        </li>
+                        <li>
+                            <div class="icon-circle"><i class="ph ph-identification-card"></i></div>
+                            <div><strong>Datos Legales</strong><span>RUC: 20611011181</span></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="contact-form-container">
+                    <!-- Mensaje cuando NO hay sesión -->
+                    <div class="login-required-msg" id="loginRequiredMsg">
+                        <i class="ph ph-lock" style="font-size:32px;color:#0ea5e9;display:block;margin-bottom:10px;"></i>
+                        <p style="font-size:15px;font-weight:700;color:#0f172a;margin:0 0 6px;">Inicia sesión para cotizar</p>
+                        <p style="font-size:13px;color:#64748b;margin:0 0 14px;">Necesitas una cuenta para enviar tu requerimiento a Droguería EKA.</p>
+                        <button onclick="openAuth()" style="padding:10px 24px;background:linear-gradient(135deg,#0ea5e9,#2ABAB4);color:white;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;">
+                            <i class="ph ph-sign-in"></i> Iniciar Sesión / Registrarse
+                        </button>
+                    </div>
+                    <!-- Badge sesión activa -->
+                    <div class="form-logged-in-badge" id="formLoggedInBadge">
+                        <i class="ph ph-check-circle"></i> Enviando como <strong id="formUserName"></strong> — tus datos ya están cargados.
+                    </div>
+                    <form class="contact-form" id="cotizacionForm">
+                        <div class="form-group">
+                            <label for="nombre">Nombre Completo</label>
+                            <input type="text" id="nombre" class="form-control" placeholder="Ej. Dr. Juan Pérez" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="entidad">Entidad / Empresa</label>
+                            <input type="text" id="entidad" class="form-control" placeholder="Hospital o Clínica" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="email">Correo Electrónico</label>
+                                <input type="email" id="email" class="form-control" placeholder="correo@entidad.pe" required>
+                            </div>
+                            <div class="form-group col">
+                                <label for="telefono">Teléfono / Celular</label>
+                                <input type="tel" id="telefono" class="form-control" placeholder="999 999 999">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mensaje">Requerimiento adicional</label>
+                            <textarea id="mensaje" class="form-control" rows="3" placeholder="Describa cualquier requerimiento especial o consulta..."></textarea>
+                        </div>
+
+                        <!-- Resumen del carrito en el formulario -->
+                        <div id="cartSummaryForm" style="display:none; background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:14px; margin-bottom:14px;">
+                            <p style="font-size:13px; font-weight:700; color:#0369a1; margin-bottom:8px;">
+                                <i class="ph ph-shopping-cart"></i> Productos en tu cotización:
+                            </p>
+                            <div id="cartSummaryList" style="font-size:12px; color:#374151;"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" id="btnEnviarCotizacion">
+                            Enviar Cotización <i class="ph ph-paper-plane-right"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── FOOTER ──────────────────────────────────────────────────────── -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="logo logo-white mb-2">
+                        <i class="ph-fill ph-heartbeats"></i>
+                        <span>Droguería <strong>EKA</strong></span>
+                    </div>
+                    <p class="footer-desc">Proveemos soluciones integrales en materiales e insumos médicos para el mercado nacional con altos estándares de calidad e innovación tecnológica.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#nosotros">Nuestra Empresa</a></li>
+                        <li><a href="#catalogo">Catálogo de Productos</a></li>
+                        <li><a href="#contacto">Solicitar Atención</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h4>Síganos en Redes</h4>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon" aria-label="LinkedIn"><i class="ph-fill ph-linkedin-logo"></i></a>
+                        <a href="#" class="social-icon" aria-label="Facebook"><i class="ph-fill ph-facebook-logo"></i></a>
+                        <a href="#" class="social-icon" aria-label="WhatsApp"><i class="ph-fill ph-whatsapp-logo"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Droguería EKA S.A.C. Todos los derechos reservados. Desarrollado para Tesis Técnica SENATI - Ingeniería de Software con IA.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // ════════════════════════════════════════════════════════════════════════
+    // CONFIG
+    // ════════════════════════════════════════════════════════════════════════
+    const API = 'https://api-drogueria-eka-geeadpd4e2hydcex.westus3-01.azurewebsites.net/api';
+    let carrito = [];
+    let catalogoData = [];
+    let sessionToken = localStorage.getItem('eka_client_token');
+    let sessionUser = JSON.parse(localStorage.getItem('eka_client_user') || 'null');
+
+    // ════════════════════════════════════════════════════════════════════════
+    // NAVBAR + FORMULARIO: actualizar estado según sesión
+    // ════════════════════════════════════════════════════════════════════════
+    function updateNavUser() {
+        const btnLogin    = document.getElementById('navUserBtn');
+        const btnHist     = document.getElementById('navHistorialBtn');
+        const btnLogout   = document.getElementById('navLogoutBtn');
+        const label       = document.getElementById('navUserLabel');
+        const loginMsg    = document.getElementById('loginRequiredMsg');
+        const loggedBadge = document.getElementById('formLoggedInBadge');
+        const formEl      = document.getElementById('cotizacionForm');
+        const fields      = formEl ? formEl.querySelectorAll('input, textarea') : [];
+
+        if (sessionUser) {
+            // Navbar: mostrar nombre + botones historial y salir
+            label.textContent = sessionUser.nombre_completo.split(' ')[0];
+            btnLogin.style.display = 'flex';
+            btnLogin.onclick = null; // el nombre solo muestra quien eres
+            btnHist.style.display = 'flex';
+            btnLogout.style.display = 'flex';
+
+            // Formulario: desbloquear + auto-fill
+            if (loginMsg) loginMsg.classList.remove('visible');
+            if (loggedBadge) {
+                loggedBadge.classList.add('visible');
+                document.getElementById('formUserName').textContent = sessionUser.nombre_completo;
+            }
+            fields.forEach(f => { f.classList.remove('locked'); f.removeAttribute('disabled'); });
+
+            // Auto-fill de campos (excepto mensaje)
+            const nombreEl  = document.getElementById('nombre');
+            const entidadEl = document.getElementById('entidad');
+            const emailEl   = document.getElementById('email');
+            const telEl     = document.getElementById('telefono');
+            if (nombreEl && !nombreEl.value)  nombreEl.value  = sessionUser.nombre_completo || '';
+            if (entidadEl && !entidadEl.value) entidadEl.value = sessionUser.entidad || '';
+            if (emailEl && !emailEl.value)    emailEl.value   = sessionUser.email || '';
+            if (telEl && !telEl.value)        telEl.value     = sessionUser.telefono || '';
+
+        } else {
+            // Navbar: mostrar solo botón de login
+            label.textContent = 'Iniciar Sesión';
+            btnLogin.style.display = 'flex';
+            btnLogin.onclick = openAuth;
+            btnHist.style.display = 'none';
+            btnLogout.style.display = 'none';
+
+            // Formulario: bloquear con mensaje de login requerido
+            if (loginMsg) loginMsg.classList.add('visible');
+            if (loggedBadge) loggedBadge.classList.remove('visible');
+            fields.forEach(f => { f.classList.add('locked'); f.setAttribute('disabled', 'disabled'); });
+        }
+    }
+
+    function doLogout() {
+        localStorage.removeItem('eka_client_token');
+        localStorage.removeItem('eka_client_user');
+        sessionToken = null;
+        sessionUser = null;
+        updateNavUser();
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // AUTH
+    // ════════════════════════════════════════════════════════════════════════
+    function openAuth() { document.getElementById('authOverlay').classList.add('active'); }
+    function closeAuth() { document.getElementById('authOverlay').classList.remove('active'); }
+    document.getElementById('authOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeAuth(); });
+
+    function switchAuthTab(tab) {
+        document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='registro')));
+        document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+        document.getElementById('panel-registro').classList.toggle('active', tab === 'registro');
+    }
+
+    async function doLogin() {
+        const email    = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errEl    = document.getElementById('login-error');
+        const sucEl    = document.getElementById('login-success');
+        errEl.style.display = 'none'; sucEl.style.display = 'none';
+        try {
+            const res  = await fetch(`${API}/clientes-web/login`, {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Error al iniciar sesión');
+
+            sessionToken = data.token;
+            sessionUser  = data.cliente;
+            localStorage.setItem('eka_client_token', sessionToken);
+            localStorage.setItem('eka_client_user', JSON.stringify(sessionUser));
+
+            sucEl.textContent = `¡Bienvenido, ${sessionUser.nombre_completo}!`;
+            sucEl.style.display = 'block';
+            updateNavUser();
+            setTimeout(closeAuth, 1200);
+        } catch (err) {
+            errEl.textContent = err.message;
+            errEl.style.display = 'block';
+        }
+    }
+
+    async function doRegistro() {
+        const errEl = document.getElementById('reg-error');
+        const sucEl = document.getElementById('reg-success');
+        errEl.style.display = 'none'; sucEl.style.display = 'none';
+        const payload = {
+            nombre_completo: document.getElementById('reg-nombre').value,
+            entidad:         document.getElementById('reg-entidad').value,
+            tipo:            document.getElementById('reg-tipo').value,
+            ruc_dni:         document.getElementById('reg-ruc').value,
+            email:           document.getElementById('reg-email').value,
+            telefono:        document.getElementById('reg-telefono').value,
+            password:        document.getElementById('reg-password').value,
+        };
+        try {
+            const res  = await fetch(`${API}/clientes-web/registro`, {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Error al crear cuenta');
+
+            sessionToken = data.token;
+            sessionUser  = data.cliente;
+            localStorage.setItem('eka_client_token', sessionToken);
+            localStorage.setItem('eka_client_user', JSON.stringify(sessionUser));
+
+            sucEl.textContent = '¡Cuenta creada! Ya puedes cotizar y hacer seguimiento de tus pedidos.';
+            sucEl.style.display = 'block';
+            updateNavUser();
+            setTimeout(closeAuth, 1800);
+        } catch (err) {
+            errEl.textContent = err.message;
+            errEl.style.display = 'block';
+        }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // HISTORIAL DE PEDIDOS
+    // ════════════════════════════════════════════════════════════════════════
+    const ESTADO_LABEL = {
+        NUEVO:       { text: '⏳ Recibido',    cls: 'badge-nuevo' },
+        EN_PROCESO:  { text: '🔄 En Proceso',  cls: 'badge-en-proceso' },
+        ATENDIDO:    { text: '✅ Aprobado',    cls: 'badge-atendido' },
+        DESCARTADO:  { text: '❌ No disponible', cls: 'badge-descartado' }
+    };
+
+    async function openHistorial() {
+        document.getElementById('historialOverlay').classList.add('open');
+        document.getElementById('historialDrawer').classList.add('open');
+        document.getElementById('historialBody').innerHTML = '<div class="historial-empty"><div class="spinner" style="margin:0 auto 12px;"></div><p>Cargando tus pedidos...</p></div>';
+
+        try {
+            const res  = await fetch(`${API}/clientes-web/mis-pedidos`, {
+                headers: { 'Authorization': `Bearer ${sessionToken}` }
+            });
+            const data = await res.json();
+            const pedidos = data.data || [];
+
+            if (!pedidos.length) {
+                document.getElementById('historialBody').innerHTML = '<div class="historial-empty"><i class="ph ph-package" style="font-size:40px;display:block;margin-bottom:12px;color:#cbd5e1"></i><p>Aún no tienes pedidos.</p><p style="font-size:12px;margin-top:4px;">Agrega productos al carrito y envía tu primera cotización.</p></div>';
+                return;
+            }
+
+            document.getElementById('historialBody').innerHTML = pedidos.map(p => {
+                const est   = ESTADO_LABEL[p.estado] || ESTADO_LABEL.NUEVO;
+                const fecha = new Date(p.fecha_recepcion).toLocaleDateString('es-PE', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+                let productosHTML = '';
+                if (p.productos_cotizados) {
+                    try {
+                        const prods = JSON.parse(p.productos_cotizados);
+                        productosHTML = `<div style="font-size:11px;color:#64748b;margin-top:8px;padding:8px;background:#f1f5f9;border-radius:8px;">
+                            ${prods.map(pr => `<div>• ${pr.cantidad}x ${pr.nombre}</div>`).join('')}
+                        </div>`;
+                    } catch(e) { /* ignorar */ }
+                }
+                return `
+                <div class="pedido-card">
+                    <div class="pedido-card-header">
+                        <span class="pedido-id">#REQ-${String(p.id).padStart(4,'0')}</span>
+                        <span class="${est.cls}">${est.text}</span>
+                    </div>
+                    <p class="pedido-requerimiento">${(p.mensaje_requerimiento || '').substring(0,160)}${p.mensaje_requerimiento?.length > 160 ? '...' : ''}</p>
+                    ${productosHTML}
+                    <p class="pedido-fecha" style="margin-top:8px;">📅 ${fecha}</p>
+                </div>`;
+            }).join('');
+        } catch {
+            document.getElementById('historialBody').innerHTML = '<div class="historial-empty" style="color:#ef4444;">Error al cargar pedidos. Intente de nuevo.</div>';
+        }
+    }
+
+    function closeHistorial() {
+        document.getElementById('historialOverlay').classList.remove('open');
+        document.getElementById('historialDrawer').classList.remove('open');
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // CATÁLOGO
+    // ════════════════════════════════════════════════════════════════════════
+    let searchTimer = null;
+
+    async function cargarCatalogo() {
+        try {
+            const res = await fetch(`${API}/productos/catalogo`);
+            const data = await res.json();
+            catalogoData = data.data || [];
+            const catSet = {};
+            catalogoData.forEach(p => { if (p.Categoria) catSet[p.categoria_id] = p.Categoria.nombre; });
+            const sel = document.getElementById('catCategoria');
+            Object.entries(catSet).forEach(([id, nombre]) => {
+                const opt = document.createElement('option');
+                opt.value = id; opt.textContent = nombre;
+                sel.appendChild(opt);
+            });
+            renderCatalogo(catalogoData);
+        } catch {
+            document.getElementById('catalogoGrid').innerHTML = '<p style="text-align:center;color:#ef4444;padding:40px">No se pudo conectar con el servidor.</p>';
+        }
+    }
+
+    function buscarCatalogo() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            const busq = document.getElementById('catSearch').value.toLowerCase();
+            const cat  = document.getElementById('catCategoria').value;
+            renderCatalogo(catalogoData.filter(p => {
+                return (p.nombre.toLowerCase().includes(busq) || p.codigo.toLowerCase().includes(busq))
+                    && (!cat || String(p.categoria_id) === cat);
+            }));
+        }, 300);
+    }
+
+    function renderCatalogo(productos) {
+        const grid = document.getElementById('catalogoGrid');
+        if (!productos.length) {
+            grid.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:40px;grid-column:1/-1">No se encontraron productos.</p>';
+            return;
+        }
+        grid.innerHTML = productos.map(p => {
+            const enCarrito  = carrito.find(c => c.id === p.id);
+            const stockColor = p.stock_actual > 20 ? '#22c55e' : p.stock_actual > 5 ? '#f59e0b' : '#ef4444';
+            
+            // Lógica de lotes
+            const lotes = p.LoteProduccions || []; 
+            let htmlLotes = '';
+
+            if (lotes.length > 0) {
+                htmlLotes = `
+                <div class="lote-selector-row">
+                    <label for="lote-${p.id}">Lote:</label>
+                    <select id="lote-${p.id}" class="lote-select">
+                        ${lotes.map(l => `<option value="${l.id}" data-numero="${l.numero_lote}">${l.numero_lote}</option>`).join('')}
+                    </select>
+                </div>`;
+            } else if (p.stock_actual > 0) {
+                htmlLotes = `<div class="lote-selector-row no-lote">Consultar lote disponible</div>`;
+            }
+
+            return `
+            <div class="catalog-card" id="card-${p.id}">
+                <span class="cat-badge">${p.Categoria?.nombre || 'General'}</span>
+                <h4>${p.nombre}</h4>
+                <span class="code">${p.codigo} · ${p.unidad_medida}</span>
+                <div class="stock-row">
+                    <span class="price">S/ ${Number(p.precio_unitario || 0).toFixed(2)}</span>
+                    <span class="stock" style="color:${stockColor}">● Stock: ${p.stock_actual}</span>
+                </div>
+                ${htmlLotes}
+                <div class="qty-row">
+                    <input type="number" class="qty-input" id="qty-${p.id}" min="1" max="${p.stock_actual}" value="1" ${p.stock_actual < 1 ? 'disabled' : ''}>
+                    <button class="btn-add-cart ${enCarrito ? 'added' : ''}" onclick="addToCart(${p.id})" ${p.stock_actual < 1 ? 'disabled' : ''} id="btn-${p.id}">
+                        ${enCarrito ? '✓ En carrito' : '+ Agregar'}
+                    </button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+
+    // ════════════════════════════════════════════════════════════════════════
+    // CARRITO
+    // ════════════════════════════════════════════════════════════════════════
+    function addToCart(productoId) {
+        const producto = catalogoData.find(p => p.id === productoId);
+        const qty      = parseInt(document.getElementById(`qty-${productoId}`).value) || 1;
+        
+        const loteEl   = document.getElementById(`lote-${productoId}`);
+        let lote_id    = null;
+        let lote_num   = null;
+        if (loteEl) {
+            lote_id  = parseInt(loteEl.value);
+            lote_num = loteEl.options[loteEl.selectedIndex].getAttribute('data-numero');
+        }
+
+        const existing = carrito.findIndex(c => c.id === productoId);
+        if (existing >= 0) { 
+            carrito[existing].cantidad = qty;
+            carrito[existing].lote_id  = lote_id;
+            carrito[existing].lote_num = lote_num;
+        } else { 
+            carrito.push({ 
+                id: producto.id, 
+                nombre: producto.nombre, 
+                cantidad: qty, 
+                unidad: producto.unidad_medida, 
+                precio: producto.precio_unitario,
+                lote_id,
+                lote_num
+            }); 
+        }
+        const btn = document.getElementById(`btn-${productoId}`);
+        btn.classList.add('added'); btn.textContent = '✓ En carrito';
+        updateCartUI();
+    }
+
+
+    function removeFromCart(productoId) {
+        carrito = carrito.filter(c => c.id !== productoId);
+        const btn = document.getElementById(`btn-${productoId}`);
+        if (btn) { btn.classList.remove('added'); btn.textContent = '+ Agregar'; }
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const badge = document.getElementById('cartBadge');
+        badge.textContent = carrito.length;
+        badge.style.display = carrito.length > 0 ? 'flex' : 'none';
+
+        const itemsEl = document.getElementById('cartItems');
+        itemsEl.innerHTML = carrito.length === 0
+            ? '<div class="cart-empty">Aún no has añadido productos.<br>Búscalos más abajo.</div>'
+            : carrito.map(c => `<div class="cart-item"><span class="cart-item-name">${c.nombre}</span><span class="cart-item-qty">${c.cantidad} ${c.unidad}</span><button class="cart-item-remove" onclick="removeFromCart(${c.id})">×</button></div>`).join('');
+
+        const summaryDiv  = document.getElementById('cartSummaryForm');
+        const summaryList = document.getElementById('cartSummaryList');
+        if (carrito.length > 0) {
+            summaryDiv.style.display = 'block';
+            summaryList.innerHTML = carrito.map(c => `<div>• ${c.nombre} — ${c.cantidad} ${c.unidad}</div>`).join('');
+        } else { summaryDiv.style.display = 'none'; }
+    }
+
+    function toggleCart() { document.getElementById('cartPanel').classList.toggle('open'); }
+
+    function irACotizacion() {
+        if (!sessionUser) { openAuth(); return; }
+        document.getElementById('cartPanel').classList.remove('open');
+        document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // FORMULARIO DE COTIZACIÓN (solo si hay sesión)
+    // ════════════════════════════════════════════════════════════════════════
+    document.getElementById('cotizacionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!sessionUser) { openAuth(); return; }
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        const orig = btn.innerHTML;
+        btn.innerHTML = 'Enviando... <i class="ph-spin ph-spinner"></i>';
+        btn.disabled = true;
+
+        const payload = {
+            nombre:              document.getElementById('nombre').value || sessionUser.nombre_completo,
+            entidad:             document.getElementById('entidad').value || sessionUser.entidad || '',
+            email:               document.getElementById('email').value  || sessionUser.email,
+            telefono:            document.getElementById('telefono').value || sessionUser.telefono || '',
+            mensaje:             document.getElementById('mensaje').value || 'Sin comentarios adicionales.',
+            productos_cotizados: carrito.length > 0 ? JSON.stringify(carrito) : null,
+            cliente_web_id:      sessionUser.id
+        };
+
+        // Anteponer lista de carrito al mensaje
+        if (carrito.length > 0) {
+            payload.mensaje = `[CARRITO: ${carrito.map(c => `${c.cantidad}x ${c.nombre}`).join(', ')}] ${payload.mensaje}`;
+        }
+
+        try {
+            const res = await fetch(`${API}/pedidos-web`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                alert('¡Cotización enviada! Recibirás un correo confirmando lo recibido. Revisa tu historial en "Mis Pedidos".');
+                document.getElementById('mensaje').value = '';
+                carrito = [];
+                updateCartUI();
+                renderCatalogo(catalogoData);
+            } else {
+                const err = await res.json();
+                alert('Error: ' + (err.error || 'Intente de nuevo.'));
+            }
+        } catch { alert('No se pudo conectar con el servidor.'); }
+        finally { btn.innerHTML = orig; btn.disabled = false; }
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // HEADER SCROLL
+    // ════════════════════════════════════════════════════════════════════════
+    window.addEventListener('scroll', () => {
+        document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // ════════════════════════════════════════════════════════════════════════
+    // INICIALIZAR
+    // ════════════════════════════════════════════════════════════════════════
+    window.addEventListener('DOMContentLoaded', () => {
+        cargarCatalogo();
+        updateNavUser(); // actualiza estado navbar + formulario al cargar
+    });
+    </script>
+</body>
+</html>
