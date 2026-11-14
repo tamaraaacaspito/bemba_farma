@@ -7,14 +7,35 @@
 # Politica de la llave KMS que permite uso a los servicios de la cuenta
 data "aws_iam_policy_document" "kms_key_policy" {
   statement {
-    sid       = "EnableIAMUserPermissions"
-    effect    = "Allow"
-    actions   = ["kms:*"]
+    sid    = "EnableIAMUserPermissions"
+    effect = "Allow"
+    actions = [
+      "kms:Create*",
+      "kms:Describe*",
+      "kms:Enable*",
+      "kms:List*",
+      "kms:Put*",
+      "kms:Update*",
+      "kms:Revoke*",
+      "kms:Disable*",
+      "kms:Get*",
+      "kms:Delete*",
+      "kms:TagResource",
+      "kms:UntagResource",
+      "kms:ScheduleKeyDeletion",
+      "kms:CancelKeyDeletion"
+    ]
     resources = ["*"]
 
     principals {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = [local.account_id]
     }
   }
 
