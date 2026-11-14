@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "kms_key_policy" {
       "kms:ScheduleKeyDeletion",
       "kms:CancelKeyDeletion"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:kms:${var.aws_region}:${local.account_id}:key/*"]
 
     principals {
       type        = "AWS"
@@ -48,7 +48,7 @@ data "aws_iam_policy_document" "kms_key_policy" {
       "kms:GenerateDataKey*",
       "kms:Describe*"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:kms:${var.aws_region}:${local.account_id}:key/*"]
 
     principals {
       type        = "Service"
@@ -72,7 +72,7 @@ data "aws_iam_policy_document" "kms_key_policy" {
       "kms:GenerateDataKey*",
       "kms:DescribeKey"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:kms:${var.aws_region}:${local.account_id}:key/*"]
 
     principals {
       type        = "Service"
