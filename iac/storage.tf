@@ -117,6 +117,17 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
   depends_on = [aws_s3_bucket_versioning.main]
 
   rule {
+    id     = "abort-incomplete-multipart-uploads"
+    status = "Enabled"
+
+    filter {}
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+  }
+
+  rule {
     id     = "cleanup-uploads"
     status = "Enabled"
 
@@ -130,10 +141,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
 
     noncurrent_version_expiration {
       noncurrent_days = 7
-    }
-
-    abort_incomplete_multipart_upload {
-      days_after_initiation = 7
     }
   }
 
@@ -151,10 +158,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "main" {
 
     noncurrent_version_expiration {
       noncurrent_days = 7
-    }
-
-    abort_incomplete_multipart_upload {
-      days_after_initiation = 7
     }
   }
 }
