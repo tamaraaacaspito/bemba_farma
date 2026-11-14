@@ -79,6 +79,25 @@ data "aws_iam_policy_document" "kms_key_policy" {
       type        = "Service"
       identifiers = ["s3.amazonaws.com", "sqs.amazonaws.com", "sns.amazonaws.com"]
     }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [local.account_id]
+    }
+
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+
+      values = [
+        "arn:aws:s3:::${local.name}-storage-${local.account_id}",
+        "arn:aws:s3:::${local.name}-logs-${local.account_id}",
+        "arn:aws:sqs:${var.aws_region}:${local.account_id}:${local.name}-queue",
+        "arn:aws:sqs:${var.aws_region}:${local.account_id}:${local.name}-dlq",
+        "arn:aws:sns:${var.aws_region}:${local.account_id}:${local.name}-alerts-topic"
+      ]
+    }
   }
 }
 
