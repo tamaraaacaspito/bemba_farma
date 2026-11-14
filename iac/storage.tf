@@ -8,7 +8,6 @@
 resource "aws_s3_bucket" "logs" {
   bucket        = "${local.name}-logs-${local.account_id}"
   force_destroy = false
-  eventbridge = true
 }
 
 # Notificaciones de eventos del bucket de logs (Checkov CKV2_AWS_62)
