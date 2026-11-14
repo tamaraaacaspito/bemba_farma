@@ -5,11 +5,15 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 # 1. Bucket S3 para Access Logs (Checkov CKV_AWS_18)
-# Checkov CKV2_AWS_62
 resource "aws_s3_bucket" "logs" {
   bucket        = "${local.name}-logs-${local.account_id}"
-  eventbridge   = true
   force_destroy = false
+}
+
+# Notificaciones de eventos del bucket de logs (Checkov CKV2_AWS_62)
+resource "aws_s3_bucket_notification" "logs" {
+  bucket      = aws_s3_bucket.logs.id
+  eventbridge = true
 }
 
 resource "aws_s3_bucket_public_access_block" "logs" {
