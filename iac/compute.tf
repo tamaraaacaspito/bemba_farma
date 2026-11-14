@@ -78,29 +78,33 @@ resource "aws_iam_role_policy" "lambda_app_permissions" {
   policy = data.aws_iam_policy_document.lambda_app_permissions.json
 }
 
-# Perfil de firma de codigo y configuracion de code-signing (Checkov CKV_AWS_272)
-resource "aws_signer_signing_profile" "lambda" {
-  platform_id = "AWSLambda-SHA384-ECDSA"
-  name_prefix = replace("${local.name}", "-", "_")
-}
-
-resource "aws_lambda_code_signing_config" "main" {
-  allowed_publishers {
-    signing_profile_version_arns = [aws_signer_signing_profile.lambda.arn]
-  }
-
-  policies {
-    untrusted_artifact_on_deployment = "Warn"
-  }
-
-  description = "Validacion de code signing para funciones Lambda"
-}
-
 # CloudWatch Log Group con retencion de 365 dias y cifrado KMS (Checkov CKV_AWS_66, 158, 338)
 resource "aws_cloudwatch_log_group" "lambda" {
   name              = "/aws/lambda/${local.name}-service"
   retention_in_days = 365
   kms_key_id        = aws_kms_key.main.arn
+}
+
+resource "aws_signer_signing_profile" "lambda" {
+  platform_id = "AWSLambda-SHA384-ECDSA"
+  name_prefix = "${replace(local.name, "-", "_")}_lambda_"
+
+  signature_validity_period {
+    value = 135
+    type  = "MONTHS"
+  }
+}
+
+resource "aws_lambda_code_signing_config" "main" {
+  description = "Validacion de firma de codigo para las funciones ${local.name}"
+
+  allowed_publishers {
+    signing_profile_version_arns = [aws_signer_signing_profile.lambda.version_arn]
+  }
+
+  policies {
+    untrusted_artifact_on_deployment = "Warn"
+  }
 }
 
 # Funcion Lambda 1: API Service
@@ -115,7 +119,6 @@ resource "aws_lambda_function" "main" {
   memory_size                    = 256
   reserved_concurrent_executions = 50                                      # Checkov CKV_AWS_115
   kms_key_arn                    = aws_kms_key.main.arn                    # Checkov CKV_AWS_173
-  code_signing_config_arn        = aws_lambda_code_signing_config.main.arn # Checkov CKV_AWS_272
   code_signing_config_arn        = aws_lambda_code_signing_config.main.arn # Checkov CKV_AWS_272
 
   dead_letter_config {
@@ -187,7 +190,6 @@ resource "aws_lambda_function" "processor" {
   memory_size                    = 512
   reserved_concurrent_executions = 20                                      # Checkov CKV_AWS_115
   kms_key_arn                    = aws_kms_key.main.arn                    # Checkov CKV_AWS_173
-  code_signing_config_arn        = aws_lambda_code_signing_config.main.arn # Checkov CKV_AWS_272
   code_signing_config_arn        = aws_lambda_code_signing_config.main.arn # Checkov CKV_AWS_272
 
   dead_letter_config {
