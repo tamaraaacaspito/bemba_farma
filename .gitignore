@@ -6,5 +6,7 @@ node_modules/
 terraform/backend.hcl
 terraform/.terraform/
 terraform/lambda.zip
+iac/.terraform/
+iac/lambda.zip
 *.tfstate
 *.tfstate.*
