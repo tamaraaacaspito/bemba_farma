@@ -7,14 +7,34 @@
 # Politica de la llave KMS que permite uso a los servicios de la cuenta
 data "aws_iam_policy_document" "kms_key_policy" {
   statement {
-    sid       = "EnableIAMUserPermissions"
-    effect    = "Allow"
-    actions   = ["kms:*"]
+    sid    = "EnableIAMUserPermissions"
+    effect = "Allow"
+    actions = [
+      "kms:Create*",
+      "kms:Describe*",
+      "kms:Enable*",
+      "kms:List*",
+      "kms:Update*",
+      "kms:Revoke*",
+      "kms:Disable*",
+      "kms:Get*",
+      "kms:Delete*",
+      "kms:TagResource",
+      "kms:UntagResource",
+      "kms:ScheduleKeyDeletion",
+      "kms:CancelKeyDeletion"
+    ]
     resources = ["*"]
 
     principals {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${local.account_id}:root"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = [local.account_id]
     }
   }
 
@@ -137,5 +157,23 @@ resource "aws_wafv2_web_acl" "main" {
     metric_name                = "${local.name}-waf-main"
     sampled_requests_enabled   = true
   }
+}
+
+# CloudWatch Log Group para WAF Logging (Checkov CKV_AWS_66, 158, 338)
+# Requisito de AWS: el nombre del Log Group debe iniciar estrictamente con 'aws-waf-logs-'
+resource "aws_cloudwatch_log_group" "waf" {
+  name              = "aws-waf-logs-${local.name}"
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.main.arn
+
+  tags = {
+    Name = "aws-waf-logs-${local.name}"
+  }
+}
+
+# Configuracion de Logging para WAFv2 (Checkov CKV_AWS_192)
+resource "aws_wafv2_web_acl_logging_configuration" "main" {
+  log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
+  resource_arn            = aws_wafv2_web_acl.main.arn
 }
 
