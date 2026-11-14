@@ -139,3 +139,21 @@ resource "aws_wafv2_web_acl" "main" {
   }
 }
 
+# CloudWatch Log Group para WAF Logging (Checkov CKV_AWS_66, 158, 338)
+# Requisito de AWS: el nombre del Log Group debe iniciar estrictamente con 'aws-waf-logs-'
+resource "aws_cloudwatch_log_group" "waf" {
+  name              = "aws-waf-logs-${local.name}"
+  retention_in_days = 365
+  kms_key_id        = aws_kms_key.main.arn
+
+  tags = {
+    Name = "aws-waf-logs-${local.name}"
+  }
+}
+
+# Configuracion de Logging para WAFv2 (Checkov CKV_AWS_192)
+resource "aws_wafv2_web_acl_logging_configuration" "main" {
+  log_destination_configs = [aws_cloudwatch_log_group.waf.arn]
+  resource_arn            = aws_wafv2_web_acl.main.arn
+}
+
